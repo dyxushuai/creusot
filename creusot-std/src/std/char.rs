@@ -23,6 +23,12 @@ extern_spec! {
         #[ensures(result@ == 0)]
         fn default() -> char;
     }
+
+    impl char {
+        #[check(ghost)]
+        #[ensures(result == (self@ <= 127))]
+        fn is_ascii(&self) -> bool;
+    }
 }
 
 impl Plain for char {
@@ -45,6 +51,8 @@ impl CharExt for char {
     #[trusted]
     #[logic(opaque)]
     #[ensures(1 <= result.len() && result.len() <= 4)]
+    #[ensures((self@ <= 127) == (result.len() == 1))]
+    #[ensures(self@ <= 127 ==> result[0]@ == self@)]
     fn to_utf8(self) -> Seq<u8> {
         dead
     }
